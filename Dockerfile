@@ -30,12 +30,12 @@ RUN pip install torch==2.1.1 torchvision==0.16.1 torchaudio==2.1.1 xformers==0.0
 
 # Install core ML and processing libraries
 RUN pip install --no-cache-dir \
-    numpy>=1.21.0 \
+    numpy==1.24.4 \
     opencv-python-headless>=4.5.0 \
     Pillow>=8.0.0 \
     scipy>=1.7.0 \
     scikit-image>=0.19.0 \
-    onnxruntime-gpu>=1.15.0 \
+    onnxruntime-gpu==1.14.1 \
     tqdm>=4.60.0
 
 # Install server and cloud libraries
@@ -116,3 +116,4 @@ EXPOSE 8000
 
 # Run handler
 CMD ["python", "/app/face_enhancer_handler.py"]
+
