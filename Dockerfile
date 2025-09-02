@@ -1,4 +1,4 @@
-# Face Enhancer Docker Image - RunPod Serverless Optimized
+# Face Enhancer Docker Image - RunPod Serverless with Direct HF Downloads
 FROM spxiong/pytorch:2.1.1-py3.10.15-cuda12.1.0-ubuntu22.04
 
 WORKDIR /app
@@ -30,12 +30,12 @@ RUN pip install torch==2.1.1 torchvision==0.16.1 torchaudio==2.1.1 xformers==0.0
 
 # Install core ML and processing libraries
 RUN pip install --no-cache-dir \
-    numpy==1.26.4 \
+    numpy>=1.21.0 \
     opencv-python-headless>=4.5.0 \
     Pillow>=8.0.0 \
     scipy>=1.7.0 \
     scikit-image>=0.19.0 \
-    onnxruntime-gpu>=1.14.1 \
+    onnxruntime-gpu>=1.15.0 \
     tqdm>=4.60.0
 
 # Install server and cloud libraries
@@ -48,17 +48,53 @@ RUN pip install --no-cache-dir \
 RUN pip install --no-cache-dir \
     https://huggingface.co/manh-linh/face_enhancers_onnx/resolve/main/insightface-0.7.3-cp310-cp310-linux_x86_64.whl
 
-# Clone face enhancers ONNX models from HuggingFace
-RUN git clone https://huggingface.co/manh-linh/face_enhancers_onnx enhancers \
-    && ls -la enhancers/ \
-    && echo "✅ Face enhancers cloned successfully"
-
-# Copy application files
+# Copy application files FIRST (including utils with retinaface model)
 COPY . /app/
 
-# Create required directories
-RUN mkdir -p /app/{input,output,temp,logs} \
-    && mkdir -p /app/utils
+# Create enhancer directories
+RUN mkdir -p /app/enhancers/Codeformer \
+    /app/enhancers/GFPGAN \
+    /app/enhancers/GPEN \
+    /app/enhancers/restoreformer
+
+# Download models directly from HuggingFace URLs
+RUN echo "=== Downloading Face Enhancement Models from HuggingFace ===" && \
+    wget --progress=bar:force \
+    https://huggingface.co/manh-linh/face_enhancers_onnx/resolve/main/Codeformer/codeformer.onnx \
+    -O /app/enhancers/Codeformer/codeformer.onnx && \
+    echo "✅ CodeFormer downloaded" && \
+    \
+    wget --progress=bar:force \
+    https://huggingface.co/manh-linh/face_enhancers_onnx/resolve/main/GFPGAN/GFPGANv1.4.onnx \
+    -O /app/enhancers/GFPGAN/GFPGANv1.4.onnx && \
+    echo "✅ GFPGAN downloaded" && \
+    \
+    wget --progress=bar:force \
+    https://huggingface.co/manh-linh/face_enhancers_onnx/resolve/main/GPEN/GPEN-BFR-512.onnx \
+    -O /app/enhancers/GPEN/GPEN-BFR-512.onnx && \
+    echo "✅ GPEN downloaded" && \
+    \
+    wget --progress=bar:force \
+    https://huggingface.co/manh-linh/face_enhancers_onnx/resolve/main/restoreformer/restoreformer16.onnx \
+    -O /app/enhancers/restoreformer/restoreformer16.onnx && \
+    echo "✅ RestoreFormer16 downloaded" && \
+    \
+    wget --progress=bar:force \
+    https://huggingface.co/manh-linh/face_enhancers_onnx/resolve/main/restoreformer/restoreformer32.onnx \
+    -O /app/enhancers/restoreformer/restoreformer32.onnx && \
+    echo "✅ RestoreFormer32 downloaded"
+
+# Verify all downloaded models and existing retinaface
+RUN echo "=== Verifying All Models ===" && \
+    echo "📁 Utils directory:" && ls -lh /app/utils/ && \
+    echo "📁 CodeFormer:" && ls -lh /app/enhancers/Codeformer/ && \
+    echo "📁 GFPGAN:" && ls -lh /app/enhancers/GFPGAN/ && \
+    echo "📁 GPEN:" && ls -lh /app/enhancers/GPEN/ && \
+    echo "📁 RestoreFormer:" && ls -lh /app/enhancers/restoreformer/ && \
+    echo "=== Model Verification Complete ==="
+
+# Create additional required directories
+RUN mkdir -p /app/{input,output,temp,logs}
 
 # Set proper permissions
 RUN chmod +x /app/face_enhancer_cli.py \
