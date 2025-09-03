@@ -60,7 +60,7 @@ MODEL_PATHS = {
     'codeformer': '/app/enhancers/Codeformer/codeformer.onnx',
     'restoreformer16': '/app/enhancers/restoreformer/restoreformer16.onnx',
     'restoreformer32': '/app/enhancers/restoreformer/restoreformer32.onnx',
-    'retinaface': '/app/enhancers/utils/scrfd_2.5g_bnkps.onnx'
+    'retinaface': '/app/utils/scrfd_2.5g_bnkps.onnx'
 }
 
 def verify_models() -> tuple[bool, list]:
@@ -539,3 +539,4 @@ if __name__ == "__main__":
         logger.error(f"❌ Startup failed: {e}")
         logger.error(f"Traceback: {traceback.format_exc()}")
         sys.exit(1)
+
