@@ -42,7 +42,8 @@ RUN pip install --no-cache-dir \
 RUN pip install --no-cache-dir \
     runpod>=1.5.0 \
     minio>=7.1.0 \
-    requests>=2.25.0
+    requests>=2.25.0 \
+    psutil
 
 # Install InsightFace from specific wheel
 RUN pip install --no-cache-dir \
@@ -116,4 +117,5 @@ EXPOSE 8000
 
 # Run handler
 CMD ["python", "/app/face_enhancer_handler.py"]
+
 
