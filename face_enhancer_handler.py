@@ -43,8 +43,8 @@ logger = logging.getLogger("face_enhancer_handler")
 # Config (environment-driven)
 # ----------------------------
 MINIO_ENDPOINT = os.environ.get("MINIO_ENDPOINT", "media.aiclip.ai")
-MINIO_ACCESS_KEY = os.environ.get("MINIO_ACCESS_KEY", "")
-MINIO_SECRET_KEY = os.environ.get("MINIO_SECRET_KEY", "")
+MINIO_ACCESS_KEY = os.environ.get("MINIO_ACCESS_KEY", "VtZ6MUPfyTOH3qSiohA2")
+MINIO_SECRET_KEY = os.environ.get("MINIO_SECRET_KEY", "8boVPVIynLEKcgXirrcePxvjSk7gReIDD9pwto3t")
 MINIO_BUCKET = os.environ.get("MINIO_BUCKET", "video")
 MINIO_SECURE = os.environ.get("MINIO_SECURE", "false").lower() in ("1", "true", "yes")
 
@@ -528,3 +528,4 @@ if __name__ == "__main__":
         logger.error(f"Startup failed: {e}")
         logger.error(traceback.format_exc())
         sys.exit(1)
+
