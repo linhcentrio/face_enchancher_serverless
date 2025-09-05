@@ -1,5 +1,5 @@
 # Face Enhancer Docker Image - RunPod Serverless with GPU Support - FIXED
-FROM nvidia/cuda:13.0.0-cudnn-devel-ubuntu22.04
+FROM nvidia/cuda:12.1.0-cudnn8-devel-ubuntu22.04
 
 WORKDIR /app
 
@@ -136,4 +136,5 @@ HEALTHCHECK --interval=30s --timeout=20s --start-period=300s --retries=3 \
 EXPOSE 8000
 
 CMD ["python", "/app/face_enhancer_handler.py"]
+
 
